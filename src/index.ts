@@ -1,3 +1,13 @@
+import http from 'http';
+const port = process.env.PORT || 10000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Netflix Bot is awake!\n');
+}).listen(port, () => {
+  console.log(`Dummy server listening on port ${port} to keep Render happy`);
+});
+
+
 import Imap from 'imap';
 import Errorlogger from './Errorlogger';
 import playwrightAutomation from './playwrightAutomation';
