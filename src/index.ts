@@ -1,3 +1,11 @@
+// Force a server reboot every 25 minutes to keep Gmail connected
+setTimeout(() => {
+  console.log("Refreshing IMAP connection...");
+  process.exit(1);
+}, 25 * 60 * 1000);
+
+
+
 import http from 'http';
 const port = process.env.PORT || 10000;
 http.createServer((req, res) => {
