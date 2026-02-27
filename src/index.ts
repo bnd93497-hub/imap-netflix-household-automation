@@ -65,14 +65,26 @@ imap.once('ready', () => {
                             const name = extractProfileName(parsed.text || '');
                             
                             if (link && waSocket) {
-                                const target = (name ? customerPhonebook[name] : null) || "96181123343@s.whatsapp.net";
-                                const message = `🎬 *Netflix Household Update*\n\nHi *${name || 'there'}*,\n\nNetflix needs to verify your household. Please click the link below from your phone while connected to your home WiFi:\n\n🔗 ${link}`;
-                                
-                                try {
-                                    await waSocket.sendMessage(target, { text: message });
-                                    console.log(`✅ LINK SENT TO: ${target}`);
-                                } catch (e) { console.log(`❌ WhatsApp Error:`, e); }
-                            }
+    const target = (name ? customerPhonebook[name] : null) || "96181123343@s.whatsapp.net";
+    
+    let message = "";
+    const subject = parsed.subject?.toLowerCase() || "";
+    const body = parsed.text?.toLowerCase() || "";
+
+    // 1. Check if it's a LOGIN CODE email
+    if (subject.includes("code") || body.includes("temporary access code")) {
+        message = `🔢 *Netflix Login Code*\n\nHi *${name || 'there'}*,\n\nHere is your requested login code. Please click the link to view it:\n\n🔗 ${link}`;
+    } 
+    // 2. Otherwise, treat it as a HOUSEHOLD UPDATE
+    else {
+        message = `📺 *Netflix Household Update*\n\nHi *${name || 'there'}*,\n\nNetflix needs to verify your TV household. Click the link below while on home WiFi:\n\n🔗 ${link}`;
+    }
+
+    try {
+        await waSocket.sendMessage(target, { text: message });
+        console.log(`✅ CORRECT TEMPLATE SENT TO: ${target}`);
+    } catch (e) { console.log(`❌ Error:`, e); }
+}
                         }
                     });
                 });
