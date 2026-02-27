@@ -93,7 +93,7 @@ imap.once('ready', () => {
                   `🔗 ${link}` +
                   `Enjoy your time on Netflix.`;
                      
-
+    }
     try {
         await waSocket.sendMessage(target, { text: message });
         console.log(`✅ MATCHED: "${fullSubject}" -> SENT TO: ${target}`);
