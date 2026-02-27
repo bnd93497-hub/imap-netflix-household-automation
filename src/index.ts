@@ -65,42 +65,44 @@ imap.once('ready', () => {
                             const name = extractProfileName(parsed.text || '');
                             
                             if (link && waSocket) {
-    const target = (name ? customerPhonebook[name] : null) || "96181123343@s.whatsapp.net";
-    
-    let message = "";
-    const subject = parsed.subject?.toLowerCase() || "";
-    const body = parsed.text?.toLowerCase() || "";
+                                const target = (name ? customerPhonebook[name] : null) || "96181123343@s.whatsapp.net";
+                                
+                                let message = "";
+                                const subject = parsed.subject?.toLowerCase() || "";
+                                const body = parsed.text?.toLowerCase() || "";
 
-    // 1. Check if it's a LOGIN CODE email
-   if (link && waSocket) {
-    const target = (profileName ? customerPhonebook[profileName] : null) || "96181123343@s.whatsapp.net";
-    const fullSubject = parsed.subject || "";
-    let message = "";
+                                // 1. Check if it's a LOGIN CODE email
+                                if (link && waSocket) {
+                                    const target = (profileName ? customerPhonebook[profileName] : null) || "96181123343@s.whatsapp.net";
+                                    const fullSubject = parsed.subject || "";
+                                    let message = "";
 
-    // --- THE SWITCHBOARD ---
+                                    // --- THE SWITCHBOARD ---
 
-    // 1. TV HOUSEHOLD UPDATE
-    if (fullSubject.includes("Important: How to update your Netflix Household")) {
-        message = `Hey *${profileName}*,\n\n` +
-                  `Netflix needs to verify your TV. Click the link below from your phone *while connected to your home WiFi*:\n\n` +
-                  `🔗 ${link}` +
-                  `Enjoy your time on Netflix.`;
-    } 
-    // 2. MOBILE / TRAVEL ACCESS CODE
-    else if (fullSubject.includes("Your Netflix temporary access code")) {
-        message = `Hey *${profileName}*,\n\n` +
-                  `Here is your requested access code. Click the link below to see the 4-digit code on your screen:\n\n` +
-                  `🔗 ${link}` +
-                  `Enjoy your time on Netflix.`;
-                     
-    }
-    try {
-        await waSocket.sendMessage(target, { text: message });
-        console.log(`✅ MATCHED: "${fullSubject}" -> SENT TO: ${target}`);
-    } catch (e) {
-        console.log(`❌ WhatsApp Error:`, e);
-    }
-}
+                                    // 1. TV HOUSEHOLD UPDATE
+                                    if (fullSubject.includes("Important: How to update your Netflix Household")) {
+                                        message = `Hey *${profileName}*,\n\n` +
+                                                  `Netflix needs to verify your TV. Click the link below from your phone *while connected to your home WiFi*:\n\n` +
+                                                  `🔗 ${link}` +
+                                                  `Enjoy your time on Netflix.`;
+                                    } 
+                                    // 2. MOBILE / TRAVEL ACCESS CODE
+                                    else if (fullSubject.includes("Your Netflix temporary access code")) {
+                                        message = `Hey *${profileName}*,\n\n` +
+                                                  `Here is your requested access code. Click the link below to see the 4-digit code on your screen:\n\n` +
+                                                  `🔗 ${link}` +
+                                                  `Enjoy your time on Netflix.`;
+                                                      
+                                    }
+                                    try {
+                                        await waSocket.sendMessage(target, { text: message });
+                                        console.log(`✅ MATCHED: "${fullSubject}" -> SENT TO: ${target}`);
+                                    } catch (e) {
+                                        console.log(`❌ WhatsApp Error:`, e);
+                                    }
+                                }
+                            }
+                        }
                     });
                 });
             });
