@@ -4,9 +4,6 @@ setTimeout(() => {
   process.exit(1);
 }, 25 * 60 * 1000);
 
-import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys';
-import qrcode from 'qrcode-terminal';
-
 import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
 
