@@ -74,17 +74,17 @@ imap.once('ready', () => {
 
                                 // 1. TV HOUSEHOLD UPDATE
                                 if (fullSubject.includes("Important: How to update your Netflix Household")) {
-                                    message = `Hey *${profileName || 'there'}*,\n\n` +
-                                              `Netflix needs to verify your TV. Click the link below from your phone *while connected to your home WiFi*:\n\n` +
-                                              `🔗 ${link}\n\n` +
-                                              `Enjoy your time on Netflix.`;
+                                    message = `Hey *${profileName}*,\n\n` +
+                                              `Netflix needs to verify your TV. Click the link below, then click 'Update Netflix Household' to continue watching.` +
+                                              ` ${link}\n\n` +
+                                              `*_Enjoy your time on Netflix.*_`;
                                 } 
                                 // 2. MOBILE / TRAVEL ACCESS CODE
                                 else if (fullSubject.includes("Your Netflix temporary access code")) {
-                                    message = `Hey *${profileName || 'there'}*,\n\n` +
-                                              `Here is your requested access code. Click the link below to see the 4-digit code on your screen:\n\n` +
-                                              `🔗 ${link}\n\n` +
-                                              `Enjoy your time on Netflix.`;
+                                    message = `Hey *${profileName}*,\n\n` +
+                                              `Click the link below to get the 4-digit code to continue watching:\n\n` +
+                                              ` ${link}\n\n` +
+                                              `*_Enjoy your time on Netflix.*_`;
                                 }
                                 
                                 // Only send if a message was generated
