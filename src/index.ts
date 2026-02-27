@@ -81,26 +81,18 @@ imap.once('ready', () => {
 
     // 1. TV HOUSEHOLD UPDATE
     if (fullSubject.includes("Important: How to update your Netflix Household")) {
-        message = `📺 *Netflix Household Update*\n\n` +
-                  `Hi *${profileName || 'there'}*,\n\n` +
+        message = `Hey *${profileName}*,\n\n` +
                   `Netflix needs to verify your TV. Click the link below from your phone *while connected to your home WiFi*:\n\n` +
-                  `🔗 ${link}`;
+                  `🔗 ${link}` +
+                  `Enjoy your time on Netflix.`;
     } 
     // 2. MOBILE / TRAVEL ACCESS CODE
     else if (fullSubject.includes("Your Netflix temporary access code")) {
-        message = `🔢 *Netflix Login Code*\n\n` +
-                  `Hi *${profileName || 'there'}*,\n\n` +
-                  `Here is your requested access code. Click the link below to see the 6-digit code on your screen:\n\n` +
-                  `🔗 ${link}`;
-    }
-    // 3. ANY OTHER NOTIFICATION
-    else {
-        message = `🎬 *Netflix Notification*\n\n` +
-                  `Hi *${profileName || 'there'}*,\n\n` +
-                  `You have a new update from Netflix. Please click the link to proceed:\n\n` +
-                  `🔗 ${link}\n\n` +
-                  `_(Subject: ${fullSubject})_`;
-    }
+        message = `Hey *${profileName}*,\n\n` +
+                  `Here is your requested access code. Click the link below to see the 4-digit code on your screen:\n\n` +
+                  `🔗 ${link}` +
+                  `Enjoy your time on Netflix.`;
+                     
 
     try {
         await waSocket.sendMessage(target, { text: message });
