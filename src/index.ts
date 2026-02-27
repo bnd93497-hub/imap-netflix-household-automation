@@ -84,7 +84,7 @@ imap.once('ready', function() {
             
             fetch.on('message', function(msg: any) {
                 msg.on('body', function(stream: any) {
-                    simpleParser(stream, async (err, parsed) => {
+                    simpleParser(stream, async (err: any, parsed: any) => {
                         if (parsed.from?.text.includes('netflix.com')) {
                             const emailText = parsed.text || '';
                             const link = extractNetflixLink(emailText);
