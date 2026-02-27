@@ -4,7 +4,32 @@ setTimeout(() => {
   process.exit(1);
 }, 25 * 60 * 1000);
 
+import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys';
+import qrcode from 'qrcode-terminal';
 
+async function connectToWhatsApp () {
+    const { state, saveCreds } = await useMultiFileAuthState('whatsapp_auth');
+    
+    const sock = makeWASocket({
+        auth: state,
+        printQRInTerminal: false 
+    });
+
+    sock.ev.on('connection.update', (update) => {
+        const { connection, qr } = update;
+        if (qr) {
+            console.log('📱 SCAN THIS QR CODE WITH YOUR WHATSAPP 📱');
+            qrcode.generate(qr, { small: true });
+        }
+        if (connection === 'open') {
+            console.log('✅ WhatsApp is officially connected!');
+        }
+    });
+    
+    sock.ev.on('creds.update', saveCreds);
+}
+
+connectToWhatsApp();
 
 import http from 'http';
 const port = process.env.PORT || 10000;
