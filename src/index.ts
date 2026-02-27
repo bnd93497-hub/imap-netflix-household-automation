@@ -112,7 +112,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     // --- THE SWITCHBOARD ---
                                     if (fullSubject.includes("Important: How to update your Netflix Household")) {
                                         message = `Hey *${profileName}*,\n\n` +
-                                                  `Netflix needs to verify your TV.,\n\n` +
+                                                  `Netflix needs to verify your TV.\n\n` +
                                                   `Click the link below, then click *'Update Netflix Household'* to continue watching:\n\n` +
                                                   ` ${link}\n\n` +
                                                   `_*Enjoy your time on Netflix.*_`;
