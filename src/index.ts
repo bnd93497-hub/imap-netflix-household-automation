@@ -15,7 +15,7 @@ async function connectToWhatsApp () {
         printQRInTerminal: false 
     });
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update', (update: any) => {
         const { connection, qr } = update;
         if (qr) {
             console.log('📱 SCAN THIS QR CODE WITH YOUR WHATSAPP 📱');
