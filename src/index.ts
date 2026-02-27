@@ -32,7 +32,12 @@ async function startWhatsApp() {
         const { connection, lastDisconnect, qr } = update;
         
         if (qr) {
-            console.log('📱 SCAN THIS QR CODE WITH YOUR WHATSAPP 📱');
+            console.log('📱 SCAN THE LINK BELOW FOR A CLEAN QR CODE 📱');
+            // This creates a clickable link that opens a perfect QR image
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qr)}`;
+            console.log('👉 CLICK HERE:', qrUrl);
+            
+            // Keeps the terminal version just in case
             qrcode.generate(qr, { small: true });
         }
         
