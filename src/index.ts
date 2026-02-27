@@ -12,7 +12,9 @@ async function connectToWhatsApp () {
     
     const sock = makeWASocket({
         auth: state,
-        printQRInTerminal: false 
+        printQRInTerminal: false ,
+        browser: ['Windows', 'Chrome', '120.0.0']
+    });
     });
 
     sock.ev.on('connection.update', (update: any) => {
