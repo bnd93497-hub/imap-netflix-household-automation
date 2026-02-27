@@ -8,7 +8,7 @@
     "qrcode-terminal": "^0.12.0",
   "name": "imap-netflix-household-automation",
   "author": "ducphu0ng",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IMAP Netflix Household automation",
   "license": "MIT",
   "type": "module",
