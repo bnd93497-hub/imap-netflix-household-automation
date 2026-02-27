@@ -1,5 +1,5 @@
 {
-
+"@types/qrcode-terminal": "^0.12.2",
   "@whiskeysockets/baileys": "^6.7.9",
     "pino": "^9.0.0",
     "qrcode-terminal": "^0.12.0",
