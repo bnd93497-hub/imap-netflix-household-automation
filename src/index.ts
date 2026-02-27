@@ -56,13 +56,17 @@ async function startWhatsApp() {
     waSocket.ev.on('creds.update', saveCreds);
 }
 
-/// --- EXTRACTION LOGIC ---
+// --- EXTRACTION LOGIC ---
 function extractProfileName(text: string): string | null {
-    // 1. First, check if someone specific requested the link
+    // Strictly looks for "Requested by [Name]" and nothing else
     const requestedMatch = text.match(/Requested by\s+([A-Za-z]+)/i);
+    
     if (requestedMatch) {
-        return requestedMatch[1]; // Returns "Elias"
+        return requestedMatch[1];
     }
+    
+    return null; 
+}
 }
 
 function extractNetflixLink(text: string): string | null {
