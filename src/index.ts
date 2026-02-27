@@ -72,18 +72,42 @@ imap.once('ready', () => {
     const body = parsed.text?.toLowerCase() || "";
 
     // 1. Check if it's a LOGIN CODE email
-    if (subject.includes("code") || body.includes("temporary access code")) {
-        message = `🔢 *Netflix Login Code*\n\nHi *${name || 'there'}*,\n\nHere is your requested login code. Please click the link to view it:\n\n🔗 ${link}`;
+   if (link && waSocket) {
+    const target = (profileName ? customerPhonebook[profileName] : null) || "96181123343@s.whatsapp.net";
+    const fullSubject = parsed.subject || "";
+    let message = "";
+
+    // --- THE SWITCHBOARD ---
+
+    // 1. TV HOUSEHOLD UPDATE
+    if (fullSubject.includes("Important: How to update your Netflix Household")) {
+        message = `📺 *Netflix Household Update*\n\n` +
+                  `Hi *${profileName || 'there'}*,\n\n` +
+                  `Netflix needs to verify your TV. Click the link below from your phone *while connected to your home WiFi*:\n\n` +
+                  `🔗 ${link}`;
     } 
-    // 2. Otherwise, treat it as a HOUSEHOLD UPDATE
+    // 2. MOBILE / TRAVEL ACCESS CODE
+    else if (fullSubject.includes("Your Netflix temporary access code")) {
+        message = `🔢 *Netflix Login Code*\n\n` +
+                  `Hi *${profileName || 'there'}*,\n\n` +
+                  `Here is your requested access code. Click the link below to see the 6-digit code on your screen:\n\n` +
+                  `🔗 ${link}`;
+    }
+    // 3. ANY OTHER NOTIFICATION
     else {
-        message = `📺 *Netflix Household Update*\n\nHi *${name || 'there'}*,\n\nNetflix needs to verify your TV household. Click the link below while on home WiFi:\n\n🔗 ${link}`;
+        message = `🎬 *Netflix Notification*\n\n` +
+                  `Hi *${profileName || 'there'}*,\n\n` +
+                  `You have a new update from Netflix. Please click the link to proceed:\n\n` +
+                  `🔗 ${link}\n\n` +
+                  `_(Subject: ${fullSubject})_`;
     }
 
     try {
         await waSocket.sendMessage(target, { text: message });
-        console.log(`✅ CORRECT TEMPLATE SENT TO: ${target}`);
-    } catch (e) { console.log(`❌ Error:`, e); }
+        console.log(`✅ MATCHED: "${fullSubject}" -> SENT TO: ${target}`);
+    } catch (e) {
+        console.log(`❌ WhatsApp Error:`, e);
+    }
 }
                         }
                     });
