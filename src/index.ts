@@ -8,12 +8,14 @@ import { JWT } from 'google-auth-library';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
 // --- GOOGLE SHEETS SETUP ---
+// We use regex to replace "\\n" and strip out accidental quotation marks from the JSON copy-paste
 const serviceAccountAuth = new JWT({
-    email: process.env.GOOGLE_CLIENT_EMAIL,
-    key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+    email: (process.env.GOOGLE_CLIENT_EMAIL || '').replace(/"/g, ''),
+    key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n').replace(/"/g, ''),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
+const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string, serviceAccountAuth);
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string, serviceAccountAuth);
 
 async function getCustomerNumber(receivingEmail: string, profileName: string): Promise<string | null> {
