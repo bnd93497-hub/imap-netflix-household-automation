@@ -1,4 +1,7 @@
 {
+
+  "mailparser": "^3.7.1",
+"@types/mailparser": "^3.4.4",
 "@types/qrcode-terminal": "^0.12.2",
   "@whiskeysockets/baileys": "^6.7.9",
     "pino": "^9.0.0",
