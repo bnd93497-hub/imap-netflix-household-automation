@@ -57,15 +57,20 @@ async function startWhatsApp() {
 }
 
 // --- EXTRACTION LOGIC ---
-function extractProfileName(text: string): string | null {
-    // Strictly looks for "Requested by [Name]" and nothing else
-    const requestedMatch = text.match(/Requested by\s+([A-Za-z]+)/i);
+function extractProfileName(text: string, html: string): string | null {
+    // Smashes both email versions together and strips out all HTML tags
+    const fullContent = (text + " " + html).replace(/<[^>]*>?/gm, '');
     
-    if (requestedMatch) {
-        return requestedMatch[1];
-    }
+    // 1. Priority: Looks for the Requester
+    const requestedMatch = fullContent.match(/Requested by[^A-Za-z]*([A-Za-z]+)/i);
+    if (requestedMatch) return requestedMatch[1];
     
-    return null; }
+    // 2. Fallback: Looks for the Account Owner
+    const hiMatch = fullContent.match(/Hi[^A-Za-z]*([A-Za-z]+)/i);
+    if (hiMatch) return hiMatch[1];
+    
+    return null; 
+}
 
 function extractNetflixLink(text: string): string | null {
     const match = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/i);
@@ -97,7 +102,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                         simpleParser(stream, async (err: any, parsed: any) => {
                             if (parsed.text?.includes('netflix.com')) {
                                 const link = extractNetflixLink(parsed.text || '');
-                                const profileName = extractProfileName(parsed.text || ''); 
+                               const profileName = extractProfileName(parsed.text || '', parsed.html || '');
                                 
                                 // We capture exactly which bot listener heard this email
                                 const receivingEmail = emailUser; 
