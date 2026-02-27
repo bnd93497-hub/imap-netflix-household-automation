@@ -7,10 +7,17 @@ setTimeout(() => {
 import makeWASocket, { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
 
+import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
+import qrcode from 'qrcode-terminal';
+
 async function connectToWhatsApp () {
     const { state, saveCreds } = await useMultiFileAuthState('whatsapp_auth');
     
+    // Forces the bot to use today's exact live WhatsApp version
+    const { version } = await fetchLatestBaileysVersion();
+    
     const sock = makeWASocket({
+        version,
         auth: state,
         printQRInTerminal: false,
         browser: ['Windows', 'Chrome', '120.0.0']
