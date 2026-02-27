@@ -65,9 +65,7 @@ function extractProfileName(text: string): string | null {
         return requestedMatch[1];
     }
     
-    return null; 
-}
-}
+    return null; }
 
 function extractNetflixLink(text: string): string | null {
     const match = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/i);
