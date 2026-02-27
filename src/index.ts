@@ -16,7 +16,6 @@ const serviceAccountAuth = new JWT({
 });
 
 const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string, serviceAccountAuth);
-const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string, serviceAccountAuth);
 
 async function getCustomerNumber(receivingEmail: string, profileName: string): Promise<string | null> {
     try {
