@@ -21,15 +21,26 @@ async function connectToWhatsApp () {
     });
 
     sock.ev.on('connection.update', (update: any) => {
-        const { connection, qr } = update;
+        const { connection, lastDisconnect, qr } = update;
+        
         if (qr) {
             console.log('📱 SCAN THIS QR CODE WITH YOUR WHATSAPP 📱');
             qrcode.generate(qr, { small: true });
             console.log('🔗 IF IT WONT SCAN, CLICK THIS LINK FOR A CLEAN IMAGE: 🔗');
             console.log(`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qr)}`);
         }
+        
         if (connection === 'open') {
             console.log('✅ WhatsApp is officially connected!');
+        }
+        
+        if (connection === 'close') {
+            // Check if WhatsApp logged us out completely, otherwise just reconnect
+            const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== 401;
+            console.log('⚠️ Connection dropped. Reconnecting...', shouldReconnect);
+            if (shouldReconnect) {
+                connectToWhatsApp();
+            }
         }
     });
     
