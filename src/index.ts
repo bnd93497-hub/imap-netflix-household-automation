@@ -101,7 +101,6 @@ imap.once('ready', () => {
         console.log(`❌ WhatsApp Error:`, e);
     }
 }
-                        }
                     });
                 });
             });
