@@ -56,17 +56,19 @@ async function startWhatsApp() {
     waSocket.ev.on('creds.update', saveCreds);
 }
 
-// --- EXTRACTION LOGIC ---
+/// --- EXTRACTION LOGIC ---
 function extractProfileName(text: string): string | null {
-    const match = text.match(/Hi\s+([A-Za-z]+),?/i);
-    return match ? match[1] : null;
+    // 1. First, check if someone specific requested the link
+    const requestedMatch = text.match(/Requested by\s+([A-Za-z]+)/i);
+    if (requestedMatch) {
+        return requestedMatch[1]; // Returns "Elias"
+    }
 }
 
 function extractNetflixLink(text: string): string | null {
     const match = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/i);
     return match ? match[0] : null;
 }
-
 // --- MULTIPLE EMAIL SCANNERS ---
 // This function acts like a blueprint. We call it once for every email in your list.
 function startEmailListener(emailUser: string, emailPass: string) {
