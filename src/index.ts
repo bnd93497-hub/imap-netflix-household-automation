@@ -8,7 +8,6 @@ import { JWT } from 'google-auth-library';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
 // --- GOOGLE SHEETS SETUP ---
-// We use regex to replace "\\n" so Render's vault doesn't break the private key format
 const serviceAccountAuth = new JWT({
     email: process.env.GOOGLE_CLIENT_EMAIL,
     key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
@@ -20,7 +19,7 @@ const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID as string, service
 async function getCustomerNumber(receivingEmail: string, profileName: string): Promise<string | null> {
     try {
         await doc.loadInfo(); 
-        const sheet = doc.sheetsByIndex[0]; // Grabs the first tab of your sheet
+        const sheet = doc.sheetsByIndex[0]; 
         const rows = await sheet.getRows();
         
         for (const row of rows) {
@@ -35,7 +34,7 @@ async function getCustomerNumber(receivingEmail: string, profileName: string): P
     } catch (error) {
         console.log("❌ Google Sheets Error:", error);
     }
-    return null; // Returns null if no match is found
+    return null; 
 }
 
 // --- WHATSAPP SETUP ---
@@ -67,71 +66,97 @@ function extractNetflixLink(text: string): string | null {
     return match ? match[0] : null;
 }
 
-// --- EMAIL SCANNER ---
-const imap = new Imap({
-    user: process.env.IMAP_USER as string,
-    password: process.env.IMAP_PASSWORD as string,
-    host: process.env.IMAP_HOST as string,
-    port: parseInt(process.env.IMAP_PORT as string, 10),
-    tls: true,
-    tlsOptions: { rejectUnauthorized: false }
-});
+// --- MULTIPLE EMAIL SCANNERS ---
+// This function acts like a blueprint. We call it once for every email in your list.
+function startEmailListener(emailUser: string, emailPass: string) {
+    const imap = new Imap({
+        user: emailUser,
+        password: emailPass,
+        host: process.env.IMAP_HOST as string || 'imap.gmail.com',
+        port: parseInt(process.env.IMAP_PORT as string || '993', 10),
+        tls: true,
+        tlsOptions: { rejectUnauthorized: false }
+    });
 
-imap.once('ready', () => {
-    console.log('✅ GMAIL LISTENER ONLINE');
-    imap.openBox('INBOX', false, (err, box) => {
-        imap.on('mail', () => {
-            const fetch = imap.seq.fetch(box.messages.total + ':*', { bodies: '' });
-            fetch.on('message', (msg) => {
-                msg.on('body', (stream) => {
-                    simpleParser(stream, async (err: any, parsed: any) => {
-                        if (parsed.text?.includes('netflix.com')) {
-                            const link = extractNetflixLink(parsed.text || '');
-                            const profileName = extractProfileName(parsed.text || ''); 
-                            
-                            // Finds exactly which email address received this notification
-                            const receivingEmail = parsed.to?.value?.[0]?.address || process.env.IMAP_USER || "";
-                            
-                            if (link && waSocket) {
-                                // Calls Google Sheets to find the match!
-                                const fetchedNumber = await getCustomerNumber(receivingEmail, profileName || "");
-                                const target = fetchedNumber || "96181123343@s.whatsapp.net"; // Failsafe to your number
+    imap.once('ready', () => {
+        console.log(`✅ GMAIL LISTENER ONLINE FOR: ${emailUser}`);
+        imap.openBox('INBOX', false, (err, box) => {
+            if (err) {
+                console.log(`❌ Inbox error for ${emailUser}:`, err);
+                return;
+            }
+            imap.on('mail', () => {
+                const fetch = imap.seq.fetch(box.messages.total + ':*', { bodies: '' });
+                fetch.on('message', (msg) => {
+                    msg.on('body', (stream) => {
+                        simpleParser(stream, async (err: any, parsed: any) => {
+                            if (parsed.text?.includes('netflix.com')) {
+                                const link = extractNetflixLink(parsed.text || '');
+                                const profileName = extractProfileName(parsed.text || ''); 
                                 
-                                const fullSubject = parsed.subject || "";
-                                let message = "";
+                                // We capture exactly which bot listener heard this email
+                                const receivingEmail = emailUser; 
+                                
+                                if (link && waSocket) {
+                                    const fetchedNumber = await getCustomerNumber(receivingEmail, profileName || "");
+                                    const target = fetchedNumber || "96181123343@s.whatsapp.net"; 
+                                    
+                                    const fullSubject = parsed.subject || "";
+                                    let message = "";
 
-                                // --- THE SWITCHBOARD ---
-                                if (fullSubject.includes("Important: How to update your Netflix Household")) {
-                                    message = `Hey *${profileName}*,\n\n` +
-                                              `Netflix needs to verify your TV. Click the link below, then click 'Update Netflix Household' to continue watching:\n\n` +
-                                              `🔗 ${link}\n\n` +
-                                              `_*Enjoy your time on Netflix.*_`;
-                                } 
-                                else if (fullSubject.includes("Your Netflix temporary access code")) {
-                                    message = `Hey *${profileName}*,\n\n` +
-                                              `Click the link below to get the 4-digit code to continue watching:\n\n` +
-                                              `🔗 ${link}\n\n` +
-                                              `_*Enjoy your time on Netflix.*_`;
-                                }
-                                
-                                if (message !== "") {
-                                    try {
-                                        await waSocket.sendMessage(target, { text: message });
-                                        console.log(`✅ SENT TO: ${target} | PROFILE: ${profileName} | GMAIL: ${receivingEmail}`);
-                                    } catch (e) {
-                                        console.log(`❌ WhatsApp Error:`, e);
+                                    // --- THE SWITCHBOARD ---
+                                    if (fullSubject.includes("Important: How to update your Netflix Household")) {
+                                        message = `Hey *${profileName}*,\n\n` +
+                                                  `Netflix needs to verify your TV.,\n\n` +
+                                                  `Click the link below, then click *'Update Netflix Household'* to continue watching:\n\n` +
+                                                  ` ${link}\n\n` +
+                                                  `_*Enjoy your time on Netflix.*_`;
+                                    } 
+                                    else if (fullSubject.includes("Your Netflix temporary access code")) {
+                                        message = `Hey *${profileName || 'there'}*,\n\n` +
+                                                  `Click the link below to get the 4-digit code to continue watching:\n\n` +
+                                                  ` ${link}\n\n` +
+                                                  `_*Enjoy your time on Netflix.*_`;
+                                    }
+                                    
+                                    if (message !== "") {
+                                        try {
+                                            await waSocket.sendMessage(target, { text: message });
+                                            console.log(`✅ SENT TO: ${target} | PROFILE: ${profileName} | GMAIL: ${receivingEmail}`);
+                                        } catch (e) {
+                                            console.log(`❌ WhatsApp Error:`, e);
+                                        }
                                     }
                                 }
                             }
-                        }
+                        });
                     });
                 });
             });
         });
     });
-});
+    
+    imap.on('error', (err: any) => {
+        console.log(`❌ IMAP Connection Error for ${emailUser}`);
+    });
 
+    imap.connect();
+}
+
+// --- LAUNCH EVERYTHING ---
 startWhatsApp();
-imap.connect();
+
+// This grabs your comma-separated lists from Render and splits them into arrays
+const emailUsers = (process.env.IMAP_USERS || process.env.IMAP_USER || "").split(',').map(u => u.trim());
+const emailPasses = (process.env.IMAP_PASSWORDS || process.env.IMAP_PASSWORD || "").split(',').map(p => p.trim());
+
+// Loops through the lists and starts a listener for each pair
+if (emailUsers.length === emailPasses.length && emailUsers[0] !== "") {
+    for (let i = 0; i < emailUsers.length; i++) {
+        startEmailListener(emailUsers[i], emailPasses[i]);
+    }
+} else {
+    console.log("❌ ERROR: Check your IMAP_USERS and IMAP_PASSWORDS in Render. They must have the same number of items.");
+}
 
 http.createServer((req, res) => { res.writeHead(200); res.end('Bot Running'); }).listen(process.env.PORT || 3000);
