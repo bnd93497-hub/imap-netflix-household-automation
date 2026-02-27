@@ -25,6 +25,8 @@ async function connectToWhatsApp () {
         if (qr) {
             console.log('📱 SCAN THIS QR CODE WITH YOUR WHATSAPP 📱');
             qrcode.generate(qr, { small: true });
+            console.log('🔗 IF IT WONT SCAN, CLICK THIS LINK FOR A CLEAN IMAGE: 🔗');
+            console.log(`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qr)}`);
         }
         if (connection === 'open') {
             console.log('✅ WhatsApp is officially connected!');
