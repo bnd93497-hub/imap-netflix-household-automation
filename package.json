@@ -45,6 +45,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "google-spreadsheet": "^4.1.1",
     "@playwright/test": "1.51.1",
     "extensionless": "^1.9.9",
     "imap": "^0.8.19"
