@@ -83,8 +83,18 @@ function extractProfileName(text: string, html: string): string | null {
 }
 
 function extractNetflixLink(text: string): string | null {
-    const match = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/i);
-    return match ? match[0] : null;
+    // 1. Find every Netflix link in the email
+    const matches = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/gi);
+    if (!matches) return null;
+
+    // 2. Look for the EXACT Household update path you just showed me
+    const householdLink = matches.find(link => 
+        link.includes('/account/update-primary-location')
+    );
+
+    // 3. Look for the standard temporary access code path
+    const loginCodeLink = matches.find(link => link.includes('/account/travel/verify'));
+
 }
 // --- MULTIPLE EMAIL SCANNERS ---
 // This function acts like a blueprint. We call it once for every email in your list.
