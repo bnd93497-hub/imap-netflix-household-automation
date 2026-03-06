@@ -112,7 +112,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
         host: 'imap.gmail.com',
         port: 993,
         tls: true,
-        keepAlive: { interval: 10000, idleInterval: 30000, forceNoKeepAlive: false },
+        keepalive: { interval: 10000, idleInterval: 30000, forceNoKeepAlive: false },
         tlsOptions: { rejectUnauthorized: false }
     });
 
