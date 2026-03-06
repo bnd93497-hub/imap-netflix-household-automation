@@ -6,7 +6,8 @@ import qrcode from 'qrcode-terminal';
 import http from 'http';
 import { JWT } from 'google-auth-library';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-
+import { MongoClient } from 'mongodb';
+import { useMongoDBAuthState } from 'mongo-baileys';
 // --- GOOGLE SHEETS SETUP ---
 // We use regex to replace "\\n" and strip out accidental quotation marks from the JSON copy-paste
 const serviceAccountAuth = new JWT({
@@ -41,9 +42,17 @@ async function getCustomerNumber(receivingEmail: string, profileName: string): P
 // --- WHATSAPP SETUP ---
 let waSocket: any = null;
 async function startWhatsApp() {
-    const { state, saveCreds } = await useMultiFileAuthState('whatsapp_auth');
+    // 1. Connect to your new database
+    const mongoClient = new MongoClient("mongodb+srv://bnd93497_db_user:FeCyajWaKx1tvugf@cluster0.r4mgag3.mongodb.net/?appName=Cluster0");
+    await mongoClient.connect();
+    const collection = mongoClient.db("whatsapp_bot").collection("auth_info");
+
+    // 2. Tell Baileys to use the database instead of the local folder
+    const { state, saveCreds } = await useMongoDBAuthState(collection);
     const { version } = await fetchLatestBaileysVersion();
+    
     waSocket = makeWASocket({ version, auth: state, printQRInTerminal: false, browser: ['Windows', 'Chrome', '120.0.0'] });
+    
     waSocket.ev.on('connection.update', (update: any) => {
         const { connection, lastDisconnect, qr } = update;
         if (qr) {
@@ -100,6 +109,23 @@ function startEmailListener(emailUser: string, emailPass: string) {
                 fetch.on('message', (msg) => {
                     msg.on('body', (stream) => {
                         simpleParser(stream, async (err: any, parsed: any) => {
+// --- START OF BOUNCER ---
+const senderEmail = parsed.from?.value[0]?.address?.toLowerCase() || "";
+const subjectLine = (parsed.subject || "").toLowerCase();
+
+// 🚨 EMERGENCY BOUNCER: Block Password Resets
+if (subjectLine.includes('password') || subjectLine.includes('reset')) {
+    console.log(`🚨 BLOCKED: Ignored a password reset email!`);
+    return; // Stops the bot immediately
+}
+
+// 🛡️ SENDER BOUNCER: Only allow official Netflix emails
+if (!senderEmail.includes('@netflix.com') && !senderEmail.includes('@mailer.netflix.com')) {
+    console.log(`🛡️ BLOCKED: Ignored fake/non-Netflix email from ${senderEmail}`);
+    return; // Stops the bot immediately
+}
+// --- END OF BOUNCER ---
+                            
                             if (parsed.text?.includes('netflix.com')) {
                                 const link = extractNetflixLink(parsed.text || '');
                                const profileName = extractProfileName(parsed.text || '', parsed.html || '');
