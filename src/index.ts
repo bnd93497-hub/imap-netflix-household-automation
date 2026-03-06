@@ -42,16 +42,17 @@ async function getCustomerNumber(receivingEmail: string, profileName: string): P
 // --- WHATSAPP SETUP ---
 let waSocket: any = null;
 async function startWhatsApp() {
-    // 1. Connect to your new database
+    // 1. Connect to your permanent database
     const mongoClient = new MongoClient("mongodb+srv://bnd93497_db_user:FeCyajWaKx1tvugf@cluster0.r4mgag3.mongodb.net/?appName=Cluster0");
     await mongoClient.connect();
     const collection = mongoClient.db("whatsapp_bot").collection("auth_info");
 
-    // 2. Tell Baileys to use the database instead of the local folder
-    const { state, saveCreds } = await useMongoDBAuthState(collection);
+    // 2. Tell Baileys to save the login here (using "as any" to bypass TypeScript strict errors)
+    const { state, saveCreds } = await useMongoDBAuthState(collection as any);
     const { version } = await fetchLatestBaileysVersion();
     
-    waSocket = makeWASocket({ version, auth: state, printQRInTerminal: false, browser: ['Windows', 'Chrome', '120.0.0'] });
+    // 3. Start the socket (also bypassing the state type check)
+    waSocket = makeWASocket({ version, auth: state as any, printQRInTerminal: false, browser: ['Windows', 'Chrome', '120.0.0'] });
     
     waSocket.ev.on('connection.update', (update: any) => {
         const { connection, lastDisconnect, qr } = update;
