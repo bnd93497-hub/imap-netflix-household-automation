@@ -83,18 +83,25 @@ function extractProfileName(text: string, html: string): string | null {
 }
 
 function extractNetflixLink(text: string): string | null {
-    // 1. Find every Netflix link in the email
+    // 1. Find all Netflix links
     const matches = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/gi);
-    if (!matches) return null;
+    
+    // 🛑 SAFETY NET: If no links exist at all, return null
+    if (!matches || matches.length === 0) return null;
 
-    // 2. Look for the EXACT Household update path you just showed me
+    // 2. ONLY return if it matches the Household update path
     const householdLink = matches.find(link => 
         link.includes('/account/update-primary-location')
     );
+    if (householdLink) return householdLink;
 
-    // 3. Look for the standard temporary access code path
+    // 3. ONLY return if it matches the standard temporary access code path
     const loginCodeLink = matches.find(link => link.includes('/account/travel/verify'));
+    if (loginCodeLink) return loginCodeLink;
 
+    // 🛑 STRICT FINISH: If none of the above matched, return null.
+    // This satisfies TypeScript and ensures no "random" links are sent.
+    return null;
 }
 // --- MULTIPLE EMAIL SCANNERS ---
 // This function acts like a blueprint. We call it once for every email in your list.
