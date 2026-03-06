@@ -130,11 +130,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
 // --- START OF BOUNCER ---
 const senderEmail = parsed.from?.value[0]?.address?.toLowerCase() || "";
 const subjectLine = (parsed.subject || "").toLowerCase();
-
-// 🚨 EMERGENCY BOUNCER: Block Password Resets
-if (subjectLine.includes('password') || subjectLine.includes('reset')) {
-    console.log(`🚨 BLOCKED: Ignored a password reset email!`);
-    return; // Stops the bot immediately
 }
 
 // 🛡️ SENDER BOUNCER: Only allow official Netflix emails
