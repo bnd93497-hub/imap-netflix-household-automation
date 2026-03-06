@@ -46,7 +46,7 @@
   },
   "dependencies": {
 
-    "mongodb": "^6.0.0",
+    "mongodb": "^6.0.0"
   "mongo-baileys": "^0.0.1"
     "google-auth-library": "^9.0.0",
     "google-spreadsheet": "^4.1.1",
