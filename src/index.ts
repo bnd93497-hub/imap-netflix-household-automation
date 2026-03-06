@@ -127,17 +127,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                 fetch.on('message', (msg) => {
                     msg.on('body', (stream) => {
                         simpleParser(stream, async (err: any, parsed: any) => {
-// --- START OF BOUNCER ---
-const senderEmail = parsed.from?.value[0]?.address?.toLowerCase() || "";
-const subjectLine = (parsed.subject || "").toLowerCase();
-}
 
-// 🛡️ SENDER BOUNCER: Only allow official Netflix emails
-if (!senderEmail.includes('@netflix.com') && !senderEmail.includes('@mailer.netflix.com')) {
-    console.log(`🛡️ BLOCKED: Ignored fake/non-Netflix email from ${senderEmail}`);
-    return; // Stops the bot immediately
-}
-// --- END OF BOUNCER ---
                             
                             if (parsed.text?.includes('netflix.com')) {
                                 const link = extractNetflixLink(parsed.text || '');
