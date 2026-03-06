@@ -204,3 +204,10 @@ if (emailUsers.length === emailPasses.length && emailUsers[0] !== "") {
 }
 
 http.createServer((req, res) => { res.writeHead(200); res.end('Bot Running'); }).listen(process.env.PORT || 3000);
+import * as http from 'http';
+
+// This creates a "heartbeat" that tells Render the bot is alive
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Bot is Online');
+}).listen(process.env.PORT || 3000);
