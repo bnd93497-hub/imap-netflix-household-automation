@@ -109,23 +109,28 @@ function startEmailListener(emailUser: string, emailPass: string) {
     const imap = new Imap({
         user: emailUser,
         password: emailPass,
-        host: process.env.IMAP_HOST as string || 'imap.gmail.com',
-        port: parseInt(process.env.IMAP_PORT as string || '993', 10),
+        host: 'imap.gmail.com',
+        port: 993,
         tls: true,
+        keepAlive: { interval: 10000, idleInterval: 30000, forceNoKeepAlive: false },
         tlsOptions: { rejectUnauthorized: false }
     });
+
+    const reconnect = () => {
+        console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
+        setTimeout(() => { try { imap.connect(); } catch (e) {} }, 30000);
+    };
 
     imap.once('ready', () => {
         console.log(`✅ GMAIL LISTENER ONLINE FOR: ${emailUser}`);
         imap.openBox('INBOX', false, (err, box) => {
-            if (err) {
-                console.log(`❌ Inbox error for ${emailUser}:`, err);
-                return;
-            }
+            if (err) { imap.destroy(); reconnect(); return; }
+            
             imap.on('mail', () => {
                 const fetch = imap.seq.fetch(box.messages.total + ':*', { bodies: '' });
                 fetch.on('message', (msg) => {
                     msg.on('body', (stream) => {
+                        // YOUR EXISTING simpleParser STARTS RIGHT HERE...
                         simpleParser(stream, async (err: any, parsed: any) => {
 
                             
