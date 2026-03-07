@@ -117,10 +117,12 @@ function startEmailListener(emailUser: string, emailPass: string) {
     });
 
     const reconnect = () => {
-        console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
-        setTimeout(() => { try { imap.connect(); } catch (e) {} }, 30000);
-    };
-
+    console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
+    imap.destroy(); // 1. Ensure the old zombie connection is dead
+    setTimeout(() => { 
+        startEmailListener(emailUser, emailPass); // 2. Restart the whole process fresh
+    }, 30000);
+};
     imap.once('ready', () => {
         console.log(`✅ GMAIL LISTENER ONLINE FOR: ${emailUser}`);
         imap.openBox('INBOX', false, (err, box) => {
