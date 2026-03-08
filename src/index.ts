@@ -182,8 +182,15 @@ function startEmailListener(emailUser: string, emailPass: string) {
         });
     });
     
-    imap.on('error', (err: any) => {
+   imap.on('error', (err: any) => {
         console.log(`❌ IMAP Connection Error for ${emailUser}`);
+        reconnect(); // <-- This tells the bot to actually restart!
+    });
+
+    // We are adding this to catch silent disconnects from Google
+    imap.on('end', () => {
+        console.log(`📡 Connection dropped for ${emailUser}.`);
+        reconnect(); // <-- This tells the bot to actually restart!
     });
 
     imap.connect();
