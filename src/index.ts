@@ -96,7 +96,7 @@ function extractNetflixLink(text: string): string | null {
     if (householdLink) return householdLink;
 
     // 3. ONLY return if it matches the standard temporary access code path
-    const loginCodeLink = matches.find(link => link.includes('/account/travel/verify?nftoken'));
+    const loginCodeLink = matches.find(link => link.includes('/account/travel'));
     if (loginCodeLink) return loginCodeLink;
 
     // 🛑 STRICT FINISH: If none of the above matched, return null.
@@ -163,7 +163,7 @@ console.log(`EXTRACTED LINK: ${link}\n`);
                                                   ` ${link}\n\n` +
                                                   `_*Enjoy your time on Netflix.*_`;
                                     } 
-                                    else if (fullSubject.includes("temporary access code")) {
+                                    else if (fullSubject.includes("Your Netflix temporary access code")) {
                                         message = `Hey *${profileName}*,\n\n` +
                                                   `Click the link below to get the 4-digit code to continue watching:\n\n` +
                                                   ` ${link}\n\n` +
