@@ -96,7 +96,7 @@ function extractNetflixLink(text: string): string | null {
     if (householdLink) return householdLink;
 
     // 3. ONLY return if it matches the standard temporary access code path
-    const loginCodeLink = matches.find(link => link.includes('/account/travel/verify'));
+    const loginCodeLink = matches.find(link => link.includes('/account/travel/verify?nftoken'));
     if (loginCodeLink) return loginCodeLink;
 
     // 🛑 STRICT FINISH: If none of the above matched, return null.
@@ -150,7 +150,12 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     const fullSubject = parsed.subject || "";
                                     let message = "";
 
-                                    // --- THE SWITCHBOARD ---
+
+                                    console.log(`\n--- 🕵️ NEW EMAIL INTERCEPTED ---`);
+console.log(`RAW SUBJECT: ${parsed.subject}`);
+console.log(`EXTRACTED LINK: ${link}\n`);
+
+     // --- THE SWITCHBOARD ---
                                     if (fullSubject.includes("Important: How to update your Netflix Household")) {
                                         message = `Hey *${profileName}*,\n\n` +
                                                   `Netflix needs to verify your TV.\n\n` +
@@ -158,8 +163,8 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                   ` ${link}\n\n` +
                                                   `_*Enjoy your time on Netflix.*_`;
                                     } 
-                                    else if (fullSubject.includes("Your Netflix temporary access code")) {
-                                        message = `Hey *${profileName || 'there'}*,\n\n` +
+                                    else if (fullSubject.includes("temporary access code")) {
+                                        message = `Hey *${profileName}*,\n\n` +
                                                   `Click the link below to get the 4-digit code to continue watching:\n\n` +
                                                   ` ${link}\n\n` +
                                                   `_*Enjoy your time on Netflix.*_`;
