@@ -123,7 +123,8 @@ function startEmailListener(emailUser: string, emailPass: string) {
             if (err) { reconnect(); return; }
             
             // Wait passively for an email to arrive
-            imap.on('mail', () => {
+            imap.on('mail', () => { 
+                console.log(`🔔 DOORBELL RANG! Google says new mail arrived for ${emailUser}`);
                 // When an email arrives, ONLY look for unread emails and mark them read immediately
                 imap.search(['UNSEEN'], (searchErr, results) => {
                     if (searchErr || !results || results.length === 0) return; 
