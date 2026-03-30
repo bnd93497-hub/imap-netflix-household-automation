@@ -142,10 +142,15 @@ let isReconnecting = false;
         imap.openBox('INBOX', false, (err, box) => {
             if (err) { imap.destroy(); reconnect(); return; }
             
-            imap.on('mail', () => {
-                const fetch = imap.seq.fetch(box.messages.total + ':*', { bodies: '' });
-                fetch.on('message', (msg) => {
-                    msg.on('body', (stream) => {
+           // 🚀 THE POLLER: Actively asks Google for UNREAD emails every 15 seconds
+            pollInterval = setInterval(() => {
+                imap.search(['UNREAD'], (searchErr, results) => {
+                    if (searchErr || !results || results.length === 0) return; 
+
+                    // markSeen: true marks it as Read so it doesn't process twice!
+                    const fetch = imap.fetch(results, { bodies: '', markSeen: true }); 
+                    fetch.on('message', (msg) => {
+                        msg.on('body', (stream) => {
                         // YOUR EXISTING simpleParser STARTS RIGHT HERE...
                         simpleParser(stream, async (err: any, parsed: any) => {
 // 🚨 PASTE THIS HERE so it rings immediately
