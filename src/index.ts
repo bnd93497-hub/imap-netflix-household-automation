@@ -117,7 +117,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
     const zombieKiller = setTimeout(() => {
         console.log(`♻️ HEARTBEAT: Force restarting ${emailUser} to prevent silent disconnect...`);
         reconnect(); 
-    }, 45 * 60 * 1000); 
+    }, 12 * 60 * 1000); 
 
     const reconnect = () => {
         if (isReconnecting) return; 
