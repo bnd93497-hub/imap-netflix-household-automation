@@ -124,14 +124,19 @@ let isReconnecting = false;
         imap.destroy(); 
         reconnect(); 
     }, 45 * 60 * 1000); // 45 minutes
-    const reconnect = () => {
+  const reconnect = () => {
+        if (isReconnecting) return; // 🛑 Prevents multiple listeners from spawning
+        isReconnecting = true;
+        
         clearTimeout(zombieKiller);
-    console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
-    imap.destroy(); // 1. Ensure the old zombie connection is dead
-    setTimeout(() => { 
-        startEmailListener(emailUser, emailPass); // 2. Restart the whole process fresh
-    }, 30000);
-};
+        clearInterval(pollInterval); // Stops the poller loop
+        
+        console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
+        imap.destroy(); 
+        setTimeout(() => { 
+            startEmailListener(emailUser, emailPass); 
+        }, 30000);
+    };
     imap.once('ready', () => {
         console.log(`✅ GMAIL LISTENER ONLINE FOR: ${emailUser}`);
         imap.openBox('INBOX', false, (err, box) => {
