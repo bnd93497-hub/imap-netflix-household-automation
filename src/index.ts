@@ -115,6 +115,9 @@ function startEmailListener(emailUser: string, emailPass: string) {
         keepalive: { interval: 10000, idleInterval: 30000, forceNoKeepAlive: false },
         tlsOptions: { rejectUnauthorized: false }
     });
+    // Add these right under the imap configuration
+let pollInterval: NodeJS.Timeout;
+let isReconnecting = false;
 // 🛡️ THE ZOMBIE KILLER
     const zombieKiller = setTimeout(() => {
         console.log(`♻️ HEARTBEAT: Force restarting ${emailUser} to prevent silent disconnect...`);
