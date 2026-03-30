@@ -168,27 +168,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                       `_*Enjoy your time on Netflix.*_`;
                                         }
                                         
-                                        if (message !== "") {
-                                            try {
-                                                // --- THE DUAL SEND ---
-                                                
-                                                // Send to you (Admin)
-                                                await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
-                                                console.log(`✅ ADMIN COPY SENT`);
-
-                                                // Send to Customer (if found in Sheet)
-                                                if (customerNumber) {
-                                                    await waSocket.sendMessage(customerNumber, { text: message });
-                                                    console.log(`✅ CUSTOMER COPY SENT TO: ${customerNumber}`);
-                                                } else {
-                                                    console.log(`⚠️ No customer phone found in Sheet for ${profileName}.`);
-                                                }
-
-                                            } catch (e) {
-                                                console.log(`❌ WhatsApp Error:`, e);
-                                            }
-                                        }
-                                        
                                        if (message !== "") {
     try {
         // 1. Send the background log to YOU (Admin)
