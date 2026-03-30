@@ -195,13 +195,13 @@ console.log(`EXTRACTED LINK: ${link}\n`);
                                         } catch (e) {
                                             console.log(`❌ WhatsApp Error:`, e);
                                         }
-                                    }
+                                   }
                                 }
-                            }
+                            });
                         });
                     });
                 });
-            });
+            }, 15000); 
         });
     });
     
