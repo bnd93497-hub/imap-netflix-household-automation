@@ -144,10 +144,13 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     
                                     console.log(`EXTRACTED LINK: ${link}\n`);
 
-                                    if (link && waSocket) {
-                                        // 🛑 SAFETY MODE: HARDCODED TO YOUR NUMBER ONLY
-                                        const target = "96181123343@s.whatsapp.net"; 
+                                   if (link && waSocket) {
+                                        // 1. Get the Customer's number from the Sheet
+                                        const customerNumber = await getCustomerNumber(receivingEmail, profileName || "");
                                         
+                                        // 2. Your personal number (The "Shadow" copy)
+                                        const myAdminNumber = "96181123343@s.whatsapp.net"; 
+
                                         const fullSubject = parsed.subject || "";
                                         let message = "";
 
@@ -163,6 +166,27 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                       `Click the link below to get the 4-digit code to continue watching:\n\n` +
                                                       ` ${link}\n\n` +
                                                       `_*Enjoy your time on Netflix.*_`;
+                                        }
+                                        
+                                        if (message !== "") {
+                                            try {
+                                                // --- THE DUAL SEND ---
+                                                
+                                                // Send to you (Admin)
+                                                await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
+                                                console.log(`✅ ADMIN COPY SENT`);
+
+                                                // Send to Customer (if found in Sheet)
+                                                if (customerNumber) {
+                                                    await waSocket.sendMessage(customerNumber, { text: message });
+                                                    console.log(`✅ CUSTOMER COPY SENT TO: ${customerNumber}`);
+                                                } else {
+                                                    console.log(`⚠️ No customer phone found in Sheet for ${profileName}.`);
+                                                }
+
+                                            } catch (e) {
+                                                console.log(`❌ WhatsApp Error:`, e);
+                                            }
                                         }
                                         
                                         if (message !== "") {
