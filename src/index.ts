@@ -24,13 +24,27 @@ async function getCustomerNumber(receivingEmail: string, profileName: string): P
         const sheet = doc.sheetsByIndex[0]; 
         const rows = await sheet.getRows();
         
+        // 1. Force the email targets into clean strings
+        const cleanSearchEmail = receivingEmail.toString().toLowerCase().trim();
+        const cleanSearchName = profileName.toString().toLowerCase().trim();
+        
         for (const row of rows) {
-            const sheetEmail = row.get('EmailAccount')?.trim().toLowerCase();
-            const sheetName = row.get('ProfileName')?.trim().toLowerCase();
+            // 2. Safely grab the raw data from the sheet
+            const rawEmail = row.get('EmailAccount');
+            const rawName = row.get('ProfileName');
+            const rawPhone = row.get('Phone');
+
+            // Skip empty rows to prevent crashes
+            if (!rawEmail || !rawName || !rawPhone) continue;
+
+            // 3. Force the sheet data into clean strings
+            const sheetEmail = rawEmail.toString().toLowerCase().trim();
+            const sheetName = rawName.toString().toLowerCase().trim();
             
-            if (sheetEmail === receivingEmail.toLowerCase() && sheetName === profileName.toLowerCase()) {
-                const phone = row.get('Phone')?.trim();
-                return `${phone}@s.whatsapp.net`;
+            // 4. The absolute match
+            if (sheetEmail === cleanSearchEmail && sheetName === cleanSearchName) {
+                const finalPhone = rawPhone.toString().trim();
+                return `${finalPhone}@s.whatsapp.net`;
             }
         }
     } catch (error) {
