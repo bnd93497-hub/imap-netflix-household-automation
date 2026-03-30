@@ -189,14 +189,23 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                             }
                                         }
                                         
-                                        if (message !== "") {
-                                            try {
-                                                await waSocket.sendMessage(target, { text: message });
-                                                console.log(`✅ SENT TO: ${target} | PROFILE: ${profileName} | GMAIL: ${receivingEmail}`);
-                                            } catch (e) {
-                                                console.log(`❌ WhatsApp Error:`, e);
-                                            }
-                                        }
+                                       if (message !== "") {
+    try {
+        // 1. Send the background log to YOU (Admin)
+        await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
+        console.log(`✅ ADMIN COPY SENT`);
+
+        // 2. Send the actual message to the CUSTOMER
+        if (customerNumber) {
+            await waSocket.sendMessage(customerNumber, { text: message });
+            console.log(`✅ CUSTOMER COPY SENT TO: ${customerNumber}`);
+        } else {
+            console.log(`⚠️ No customer phone found in Sheet for ${profileName}.`);
+        }
+    } catch (e) {
+        console.log(`❌ WhatsApp Error:`, e);
+    }
+}
                                     } else if (!link) {
                                         console.log(`⚠️ WARNING: Email found, but NO LINK extracted.`);
                                     }
