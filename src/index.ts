@@ -115,8 +115,14 @@ function startEmailListener(emailUser: string, emailPass: string) {
         keepalive: { interval: 10000, idleInterval: 30000, forceNoKeepAlive: false },
         tlsOptions: { rejectUnauthorized: false }
     });
-
+// 🛡️ THE ZOMBIE KILLER
+    const zombieKiller = setTimeout(() => {
+        console.log(`♻️ HEARTBEAT: Force restarting ${emailUser} to prevent silent disconnect...`);
+        imap.destroy(); 
+        reconnect(); 
+    }, 45 * 60 * 1000); // 45 minutes
     const reconnect = () => {
+        clearTimeout(zombieKiller);
     console.log(`🔄 Reconnecting for ${emailUser} in 30s...`);
     imap.destroy(); // 1. Ensure the old zombie connection is dead
     setTimeout(() => { 
@@ -134,7 +140,9 @@ function startEmailListener(emailUser: string, emailPass: string) {
                     msg.on('body', (stream) => {
                         // YOUR EXISTING simpleParser STARTS RIGHT HERE...
                         simpleParser(stream, async (err: any, parsed: any) => {
-
+// 🚨 PASTE THIS HERE so it rings immediately
+    console.log(`\n--- 🕵️ NEW EMAIL INTERCEPTED FOR ${emailUser} ---`);
+    console.log(`RAW SUBJECT: ${parsed.subject}`);
                             
                             if (parsed.text?.includes('netflix.com')) {
                                 const link = extractNetflixLink(parsed.text || '');
@@ -150,9 +158,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     const fullSubject = parsed.subject || "";
                                     let message = "";
 
-
-                                    console.log(`\n--- 🕵️ NEW EMAIL INTERCEPTED ---`);
-console.log(`RAW SUBJECT: ${parsed.subject}`);
 console.log(`EXTRACTED LINK: ${link}\n`);
 
      // --- THE SWITCHBOARD ---
@@ -188,12 +193,14 @@ console.log(`EXTRACTED LINK: ${link}\n`);
     });
     
    imap.on('error', (err: any) => {
+       clearTimeout(zombieKiller);
         console.log(`❌ IMAP Connection Error for ${emailUser}`);
         reconnect(); // <-- This tells the bot to actually restart!
     });
 
     // We are adding this to catch silent disconnects from Google
     imap.on('end', () => {
+        clearTimeout(zombieKiller);
         console.log(`📡 Connection dropped for ${emailUser}.`);
         reconnect(); // <-- This tells the bot to actually restart!
     });
