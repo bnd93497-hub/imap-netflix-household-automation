@@ -195,17 +195,18 @@ console.log(`EXTRACTED LINK: ${link}\n`);
                                         } catch (e) {
                                             console.log(`❌ WhatsApp Error:`, e);
                                         }
-                                   }
+                                    }
                                 }
-                            });
+                            }
                         });
                     });
                 });
-            }, 15000); 
-        });
+            });
+        }, 15000); 
     });
-    
-   imap.on('error', (err: any) => {
+});
+
+imap.on('error', (err: any) => {
        clearTimeout(zombieKiller);
         console.log(`❌ IMAP Connection Error for ${emailUser}`);
         reconnect(); // <-- This tells the bot to actually restart!
