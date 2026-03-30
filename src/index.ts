@@ -3,14 +3,14 @@ import Imap from 'imap';
 import { simpleParser } from 'mailparser';
 import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import qrcode from 'qrcode-terminal';
-import http from 'http';
-import { JWT } from 'google-auth-library';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { MongoClient } from 'mongodb';
+;
 import { useMongoDBAuthState } from 'mongo-baileys';
 // --- GOOGLE SHEETS SETUP ---
 // We use regex to replace "\\n" and strip out accidental quotation marks from the JSON copy-paste
-const serviceAccountAuth = new JWT({
+const serviceAccountAuth = ne
+    
+
+w JWT({
     email: (process.env.GOOGLE_CLIENT_EMAIL || '').replace(/"/g, ''),
     key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n').replace(/"/g, ''),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
