@@ -144,6 +144,7 @@ let isReconnecting = false;
             
            // 🚀 THE POLLER: Actively asks Google for UNREAD emails every 15 seconds
             pollInterval = setInterval(() => {
+                console.log(`⏱️ [${new Date().toLocaleTimeString()}] Polling inbox for ${emailUser}...`);
                 imap.search(['UNREAD'], (searchErr, results) => {
                     if (searchErr || !results || results.length === 0) return; 
 
