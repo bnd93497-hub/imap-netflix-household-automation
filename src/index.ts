@@ -203,7 +203,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                       ` ${link}\n\n` +
                                                       `_*Enjoy your time on Netflix.*_`;
                                         }
-                                        
+                         if (message !== "") {               
     try {
         // 1. Send the background log to YOU (Admin)
         await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
