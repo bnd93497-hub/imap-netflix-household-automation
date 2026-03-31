@@ -8,6 +8,7 @@ import { JWT } from 'google-auth-library';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { MongoClient } from 'mongodb';
 import { useMongoDBAuthState } from 'mongo-baileys';
+http.createServer((req, res) => { res.writeHead(200); res.end('Bot Running'); }).listen(process.env.PORT || 3000);
 // This remembers the last time a customer got a text
 const cooldownMap = new Map<string, number>();
 // --- GOOGLE SHEETS SETUP ---
@@ -257,5 +258,3 @@ if (emailUsers.length === emailPasses.length && emailUsers[0] !== "") {
 } else {
     console.log("❌ ERROR: Check your IMAP_USERS and IMAP_PASSWORDS in Render. They must have the same number of items.");
 }
-
-http.createServer((req, res) => { res.writeHead(200); res.end('Bot Running'); }).listen(process.env.PORT || 3000);
