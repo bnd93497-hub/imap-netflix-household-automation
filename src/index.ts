@@ -224,7 +224,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                         console.log(`⚠️ WARNING: Email found, but NO LINK extracted.`);
                                     }
                                 }
-                                }
                             });
                         });
                     });
