@@ -194,7 +194,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                             const lastSent = customerNumber ? (cooldownMap.get(customerNumber) || 0) : 0;
 
                                             // If it has been LESS than 60,000 milliseconds (60 seconds), ignore it!
-                                            if (now - lastSent < 60000) {
+                                            if (now - lastSent < 120000) {
                                                 console.log(`🛑 ANTI-SPAM: Ignored duplicate email for ${profileName}. Sent too recently.`);
                                             } else {
     try {
