@@ -219,7 +219,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
     } catch (e) {
         console.log(`❌ WhatsApp Error:`, e);
     }
-}
  } else if (!link) {
                                         console.log(`⚠️ WARNING: Email found, but NO LINK extracted.`);
                                     }
@@ -244,7 +243,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
     });
 
     imap.connect();
-}
 
 // --- LAUNCH EVERYTHING ---
 startWhatsApp();
