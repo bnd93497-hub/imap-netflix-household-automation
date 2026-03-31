@@ -79,11 +79,18 @@ async function startWhatsApp() {
 
 // --- EXTRACTION LOGIC ---
 function extractProfileName(text: string, html: string): string | null {
-    const fullContent = (text + " " + html).replace(/<[^>]*>?/gm, '');
-    const requestedMatch = fullContent.match(/Requested by[^A-Za-z]*([A-Za-z]+)/i);
-    if (requestedMatch) return requestedMatch[1];
-    const hiMatch = fullContent.match(/Hi[^A-Za-z]*([A-Za-z]+)/i);
-    if (hiMatch) return hiMatch[1];
+    // 1. Strip HTML but replace tags with spaces so words don't smash together
+    const fullContent = (text + " " + html).replace(/<[^>]*>?/gm, ' ');
+    
+    // 2. ONLY look for "Requested by" and grab everything after it until a period is hit.
+    // This perfectly captures names with spaces or numbers (like "Profile 1" or "Admins")
+    const requestedMatch = fullContent.match(/Requested by[:\s]*([^.\n]+)/i);
+    
+    if (requestedMatch) {
+        return requestedMatch[1].trim(); 
+    }
+    
+    // 3. STRICT RULE: We no longer look at "Hi...". If it's the wrong name, we return null.
     return null; 
 }
 
