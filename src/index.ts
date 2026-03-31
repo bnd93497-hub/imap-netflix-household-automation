@@ -187,7 +187,15 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                       `_*Enjoy your time on Netflix.*_`;
                                         }
                                         
-                                       if (message !== "") {
+                                           if (message !== "") {
+                                            const now = Date.now();
+                                            // Get the last time we texted this specific customer (default to 0 if never)
+                                            const lastSent = customerNumber ? (cooldownMap.get(customerNumber) || 0) : 0;
+
+                                            // If it has been LESS than 60,000 milliseconds (60 seconds), ignore it!
+                                            if (now - lastSent < 60000) {
+                                                console.log(`🛑 ANTI-SPAM: Ignored duplicate email for ${profileName}. Sent too recently.`);
+                                            } else {
     try {
         // 1. Send the background log to YOU (Admin)
         await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
