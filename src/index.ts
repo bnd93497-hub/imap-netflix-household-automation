@@ -79,21 +79,19 @@ async function startWhatsApp() {
 
 // --- EXTRACTION LOGIC ---
 function extractProfileName(text: string, html: string): string | null {
-    // 1. Strip HTML but replace tags with spaces so words don't smash together
+    // 1. Strip HTML tags and replace with spaces
     const fullContent = (text + " " + html).replace(/<[^>]*>?/gm, ' ');
     
-    // 2. ONLY look for "Requested by" and grab everything after it until a period is hit.
-    // This perfectly captures names with spaces or numbers (like "Profile 1" or "Admins")
-    const requestedMatch = fullContent.match(/Requested by[:\s]*([^.\n]+)/i);
+    // 2. ONLY grab the text that sits exactly between "Requested by" and "from"
+    const requestedMatch = fullContent.match(/Requested by\s+(.*?)\s+from/i);
     
-    if (requestedMatch) {
+    if (requestedMatch && requestedMatch[1]) {
         return requestedMatch[1].trim(); 
     }
     
-    // 3. STRICT RULE: We no longer look at "Hi...". If it's the wrong name, we return null.
+    // 3. Strict fallback: if we don't find that exact sentence, return null
     return null; 
 }
-
 function extractNetflixLink(text: string): string | null {
     const matches = text.match(/https:\/\/(www\.)?netflix\.com\/[^\s"'>]+/gi);
     if (!matches || matches.length === 0) return null;
