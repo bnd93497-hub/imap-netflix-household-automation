@@ -220,11 +220,11 @@ function startEmailListener(emailUser: string, emailPass: string) {
         console.log(`❌ WhatsApp Error:`, e);
     }
 }}
- } else if (!link) {
+ }); else if (!link) {
                                         console.log(`⚠️ WARNING: Email found, but NO LINK extracted.`);
                                     }
                             }
-                                         }
+                                         });
                             });
                         });
                     });
