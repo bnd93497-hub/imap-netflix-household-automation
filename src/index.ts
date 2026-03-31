@@ -166,7 +166,8 @@ function startEmailListener(emailUser: string, emailPass: string) {
 
                                    if (link && waSocket) {
 // 🚨 THE FRONT DOOR BOUNCER 🚨
-                                        // We track the Gmail address and the Subject. 
+                                        // We track the Gmail address and the Subject.
+                                       const fullSubject = parsed.subject || "";
                                         const spamKey = `${receivingEmail}-${fullSubject}`;
                                         const now = Date.now();
                                         const lastSent = cooldownMap.get(spamKey) || 0;
@@ -187,7 +188,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                         // 2. Your personal number (The "Shadow" copy)
                                         const myAdminNumber = "96181123343@s.whatsapp.net"; 
 
-                                        const fullSubject = parsed.subject || "";
+                                        
                                         let message = "";
 
                                         if (fullSubject.includes("Important: How to update your Netflix Household")) {
