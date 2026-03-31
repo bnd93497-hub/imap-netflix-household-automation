@@ -230,7 +230,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                 });
             });
         });
-
+});
     imap.on('error', (err: any) => {
         console.log(`❌ IMAP Connection Error for ${emailUser}`);
         reconnect(); 
