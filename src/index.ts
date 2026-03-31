@@ -165,6 +165,22 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     console.log(`EXTRACTED LINK: ${link}\n`);
 
                                    if (link && waSocket) {
+// 🚨 THE FRONT DOOR BOUNCER 🚨
+                                        // We track the Gmail address and the Subject. 
+                                        const spamKey = `${receivingEmail}-${fullSubject}`;
+                                        const now = Date.now();
+                                        const lastSent = cooldownMap.get(spamKey) || 0;
+
+                                        // If this EXACT email hit this Gmail account in the last 60 secs, kill it.
+                                        if (now - lastSent < 60000) {
+                                            console.log(`🛑 ANTI-SPAM: Caught duplicate email for ${receivingEmail} at the front door. Killed.`);
+                                            return; // <-- This magic word stops the code dead in its tracks.
+                                        }
+                                        
+                                        // Instantly lock the door so the email arriving 1 millisecond later gets blocked
+                                        cooldownMap.set(spamKey, now);
+                                        // 🚨 END OF BOUNCER 🚨
+                                       
                                         // 1. Get the Customer's number from the Sheet
                                         const customerNumber = await getCustomerNumber(receivingEmail, profileName || "");
                                         
@@ -188,15 +204,6 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                                       `_*Enjoy your time on Netflix.*_`;
                                         }
                                         
-                                           if (message !== "") {
-                                            const now = Date.now();
-                                            // Get the last time we texted this specific customer (default to 0 if never)
-                                            const lastSent = customerNumber ? (cooldownMap.get(customerNumber) || 0) : 0;
-
-                                            // If it has been LESS than 60,000 milliseconds (60 seconds), ignore it!
-                                            if (now - lastSent < 120000) {
-                                                console.log(`🛑 ANTI-SPAM: Ignored duplicate email for ${profileName}. Sent too recently.`);
-                                            } else {
     try {
         // 1. Send the background log to YOU (Admin)
         await waSocket.sendMessage(myAdminNumber, { text: `🛡️ [ADMIN LOG]\nFrom: ${receivingEmail}\nTo: ${profileName}\n\n` + message });
