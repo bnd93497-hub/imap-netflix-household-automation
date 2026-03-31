@@ -8,7 +8,8 @@ import { JWT } from 'google-auth-library';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { MongoClient } from 'mongodb';
 import { useMongoDBAuthState } from 'mongo-baileys';
-
+// This remembers the last time a customer got a text
+const cooldownMap = new Map<string, number>();
 // --- GOOGLE SHEETS SETUP ---
 const serviceAccountAuth = new JWT({
     email: (process.env.GOOGLE_CLIENT_EMAIL || '').replace(/"/g, ''),
