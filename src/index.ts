@@ -58,7 +58,7 @@ async function getCustomerNumber(receivingEmail: string, profileName: string): P
 // --- WHATSAPP SETUP ---
 let waSocket: any = null;
 async function startWhatsApp() {
-   const mongoClient = new MongoClient("mongodb+srv://bnd93497_db_user:gKzbKtk3lRO6Bkmj@cluster0.r4mgag3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tls=true");
+   const mongoClient = new MongoClient("mongodb+srv://bnd93497_db_user:BotAdmin123@cluster1.hxqhlsq.mongodb.net/?appName=Cluster1&tls=true");
     await mongoClient.connect();
     const collection = mongoClient.db("whatsapp_bot").collection("auth_info");
 
