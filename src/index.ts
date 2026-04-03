@@ -195,15 +195,15 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                         if (fullSubject.includes("Important: How to update your Netflix Household")) {
                                             message = `Hey *${profileName}*,\n\n` +
                                                       `Netflix needs to verify your TV.\n\n` +
-                                                      `Click the link below, then click *'Confirm Update'* to continue watching:\n\n` +
+                                                      `Click the link below, then select *'Confirm Update'* to continue watching:\n\n` +
                                                       ` ${link}\n\n` +
-                                                      `_*Enjoy your time on Netflix.*_`;
+                                                      `_*Enjoy watching Netflix.*_`;
                                         } 
                                         else if (fullSubject.includes("Your Netflix temporary access code")) {
                                             message = `Hey *${profileName}*,\n\n` +
                                                       `Click the link below to get the 4-digit code to continue watching:\n\n` +
                                                       ` ${link}\n\n` +
-                                                      `_*Enjoy your time on Netflix.*_`;
+                                                      `_*Enjoy watching Netflix.*_`;
                                         }
                          if (message !== "") {               
     try {
