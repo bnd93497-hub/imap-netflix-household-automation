@@ -174,7 +174,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                         const lastSent = cooldownMap.get(spamKey) || 0;
 
                                         // If this EXACT email hit this Gmail account in the last 60 secs, kill it.
-                                        if (now - lastSent < 60000) {
+                                        if (now - lastSent < 420000) {
                                             console.log(`🛑 ANTI-SPAM: Caught duplicate email for ${receivingEmail} at the front door. Killed.`);
                                             return; // <-- This magic word stops the code dead in its tracks.
                                         }
