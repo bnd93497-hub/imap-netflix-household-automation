@@ -165,6 +165,18 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     
                                     console.log(`EXTRACTED LINK: ${link}\n`);
 
+// --- 🚫 THE SNIPER BLOCK (Specific TV Link Block) 🚫 ---
+                                    const blockedUser = "Mostafa"; // <-- CHANGE THIS NAME
+                                    
+                                    const isBlockedGuy = profileName.toLowerCase().trim() === blockedUser.toLowerCase().trim();
+                                    const isTvUpdate = fullSubject.includes("Important: How to update your Netflix Household");
+
+                                    if (isBlockedGuy && isTvUpdate) {
+                                        console.log(`🛑 [BLOCKED] Denied TV Household link for ${profileName}.`);
+                                        return; // Stops the bot here, trashes the link!
+                                    }
+                                    // --------------------------------------------------------
+                                    
                                    if (link && waSocket) {
 // 🚨 THE FRONT DOOR BOUNCER 🚨
                                         // We track the Gmail address and the Subject.
