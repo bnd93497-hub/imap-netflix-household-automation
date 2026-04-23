@@ -169,7 +169,7 @@ function startEmailListener(emailUser: string, emailPass: string) {
                                     const blockedUser = "Mostafa"; // <-- CHANGE THIS NAME
                                     
                                     const isBlockedGuy = profileName.toLowerCase().trim() === blockedUser.toLowerCase().trim();
-                                    const isTvUpdate = fullSubject.includes("Important: How to update your Netflix Household");
+                                   const isTvUpdate = (parsed.subject || "").includes("Important: How to update your Netflix Household");
 
                                     if (isBlockedGuy && isTvUpdate) {
                                         console.log(`🛑 [BLOCKED] Denied TV Household link for ${profileName}.`);
